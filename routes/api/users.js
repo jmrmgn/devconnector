@@ -8,4 +8,9 @@ const userController = require('../../controllers/usersControllers');
 // @accecss Public
 router.get('/', userController.getIndex);
 
+// @route   POST api/users/register
+// @desc    Register user
+// @accecss Public
+router.post('/register', userController.postRegister);
+
 module.exports = router;
