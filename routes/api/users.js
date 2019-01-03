@@ -13,4 +13,9 @@ router.get('/', userController.getIndex);
 // @accecss Public
 router.post('/register', userController.postRegister);
 
+// @route   POST api/users/login
+// @desc    Login user / Returning JWT 
+// @accecss Public
+router.post('/login', userController.postLogin);
+
 module.exports = router;
