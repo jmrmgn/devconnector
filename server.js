@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const app = express();
 
@@ -23,6 +24,12 @@ app.use(bodyParser.json());
 //    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 //    next();
 // });
+
+// Passport middleware
+app.use(passport.initialize());
+
+// Passport Config
+require('./config/passport')(passport);
 
 // Use routes
 app.use('/api/users', usersRoutes);
