@@ -4,11 +4,19 @@ const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
 
 const errorHandler = require('../middleware/errorHandler').errorHandler;
+const validateRegisterInput = require('../validation/register');
+const validateLoginInput = require('../validation/login');
 
 const User = require('../models/User');
 
 exports.postRegister = async (req, res, next) => {
-   
+   const { errors, isValid } = validateRegisterInput(req.body);
+
+   // Check validation
+   if (!isValid) {
+      return res.status(400).json(errors);
+   }
+
    const name = req.body.name;
    const email = req.body.email;
    const password = req.body.password;
@@ -21,7 +29,8 @@ exports.postRegister = async (req, res, next) => {
    try {
       const user = await User.findOne({ email: email });
       if (user) {
-         throw errorHandler("Email already exist.", 400);
+         errors.email = "Email already exist.";
+         res.status(400).json(errors);
       }
       else {
          // Password hash
@@ -44,6 +53,13 @@ exports.postRegister = async (req, res, next) => {
 };
 
 exports.postLogin = async (req, res, next) => {
+   const { errors, isValid } = validateLoginInput(req.body);
+
+   // Check validation
+   if (!isValid) {
+      return res.status(400).json(errors);
+   }
+   
    const email = req.body.email;
    const password = req.body.password;
 
@@ -51,7 +67,8 @@ exports.postLogin = async (req, res, next) => {
       // Check user email
       const user = await User.findOne({ email: email });
       if (!user) {
-         throw errorHandler('User not found!', 401);
+         errors.email = "User not found!";
+         res.status(400).json(errors);
       }
       else {
          const isMatch = await bcrypt.compare(password, user.password);
@@ -68,7 +85,8 @@ exports.postLogin = async (req, res, next) => {
             res.json({ success: true, token: 'Bearer ' + token });
          }
          else {
-            throw errorHandler('Wrong password!', 401);
+            errors.email = "Wrong password";
+            res.status(400).json(errors);
          }
       }
    }
