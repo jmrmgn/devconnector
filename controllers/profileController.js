@@ -1,11 +1,14 @@
+const validateProfileInput = require('../validation/profile');
+
 // Models
 const Profile = require('../models/Profile');
+const User = require('../models/User');
 
 exports.getProfile = async (req, res) => {
    try {
       const errors = {};
 
-      const profile = await Profile.findOne({ user: req.user.id });
+      const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'email']);
       if (!profile) {
          errors.noprofile = 'There is no profile for this user';
          return res.status(404).json(errors);
@@ -20,6 +23,14 @@ exports.getProfile = async (req, res) => {
 }
 
 exports.postProfile = async (req, res) => {
+
+   const { errors, isValid } = validateProfileInput(req.body);
+
+   // Check Validation
+   if (!isValid) {
+      res.status(400).json(errors);
+   }
+
    // Get fields
    const profileFields = {};
    profileFields.user = req.user.id;
@@ -48,7 +59,11 @@ exports.postProfile = async (req, res) => {
       const profile = await Profile.findOne({ user: req.user.id });
       if (profile) {
          // Update
-         const profile = await Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true });
+         const profile = await Profile.findOneAndUpdate(
+            { user: req.user.id },
+            { $set: profileFields },
+            { new: true, useFindAndModify: false }
+         );
          res.json(profile);
       }
       else {

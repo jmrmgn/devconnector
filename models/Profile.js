@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const ProfileSchema = new Schema({
    user: {
       type: Schema.Types.ObjectId,
-      ref: 'user'
+      ref: 'users'
    },
    handle: {
       type: String,
@@ -115,4 +115,4 @@ const ProfileSchema = new Schema({
    }
 });
 
-module.exports = mongoose.model('profile', ProfileSchema);
+module.exports = mongoose.model('profile', ProfileSchema, 'profiles');
