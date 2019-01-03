@@ -9,4 +9,10 @@ const profileController = require('../../controllers/profileController');
 // @accecss Private
 router.get('/', passport.authenticate('jwt', { session: false }), profileController.getProfile);
 
+// @route   POST api/profile
+// @desc    Create or Update user profile
+// @accecss Private
+router.post('/', passport.authenticate('jwt', { session: false }), profileController.postProfile);
+
+
 module.exports = router;
