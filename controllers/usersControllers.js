@@ -3,13 +3,11 @@ const gravatar = require('gravatar');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
 
+const errorHandler = require('../middleware/errorHandler').errorHandler;
+
 const User = require('../models/User');
 
-exports.getIndex = (req, res) => {
-   res.send('Users index');
-};
-
-exports.postRegister = async (req, res) => {
+exports.postRegister = async (req, res, next) => {
    
    const name = req.body.name;
    const email = req.body.email;
@@ -23,7 +21,7 @@ exports.postRegister = async (req, res) => {
    try {
       const user = await User.findOne({ email: email });
       if (user) {
-         res.status(400).json({ msg: "Email already exists" });
+         throw errorHandler("Email already exist.", 400);
       }
       else {
          // Password hash
@@ -41,11 +39,11 @@ exports.postRegister = async (req, res) => {
       }
    }
    catch (err) {
-      res.status(404).json({ msg: err });
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
 };
 
-exports.postLogin = async (req, res) => {
+exports.postLogin = async (req, res, next) => {
    const email = req.body.email;
    const password = req.body.password;
 
@@ -53,7 +51,7 @@ exports.postLogin = async (req, res) => {
       // Check user email
       const user = await User.findOne({ email: email });
       if (!user) {
-         res.status(404).json({ msg: "User not found" });
+         throw errorHandler('User not found!', 401);
       }
       else {
          const isMatch = await bcrypt.compare(password, user.password);
@@ -68,16 +66,14 @@ exports.postLogin = async (req, res) => {
             // Signing the token
             const token = await jwt.sign(payload, keys.secret, { expiresIn: 3600 });
             res.json({ success: true, token: 'Bearer ' + token });
-
-            res.status(200).json({ msg: 'Success' });
          }
          else {
-            res.status(422).json({ msg: 'Incorrect credentials' });
+            throw errorHandler('Wrong password!', 401);
          }
       }
    }
    catch (err) {
-      res.status(404).json({ msg: err });
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
    
 };

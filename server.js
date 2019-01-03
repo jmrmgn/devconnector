@@ -16,10 +16,26 @@ const db = require('./config/keys');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// // Setup header
+// app.use((req, res, next) => {
+//    res.setHeader('Access-Control-Allow-Origin', '*');
+//    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+//    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//    next();
+// });
+
 // Use routes
 app.use('/api/users', usersRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/posts', postsRoutes);
+
+// Error handler middleware
+app.use((error, req, res, next) => {
+   const status = error.statusCode || 500;
+   const message = error.message;
+   const data = error.data;
+   res.status(status).json({message: message, data: data});
+});
 
 // DB connection
 mongoose.connect(
