@@ -86,3 +86,55 @@ exports.postProfile = async (req, res) => {
    }
    
 }
+
+exports.getProfileByHandle = async (req, res) => {
+   try {
+      const errors = {};
+      const handle = req.params.handle;
+      const profile = await Profile.findOne({ handle: handle }).populate('user', ['name', 'avatar'])
+      if (!profile) {
+         errors.noprofile = 'There is no profile for this user';
+         res.status(404).json(errors);
+      }
+      else {
+         res.json(profile);
+      }
+   }
+   catch (err) {
+      res.status(404).json(err);
+   }
+};
+
+exports.getProfileByUserId = async (req, res) => {
+   try {
+      const errors = {};
+      const userId = req.params.userId;
+      const profile = await Profile.findOne({ user: userId }).populate('user', ['name', 'avatar'])
+      if (!profile) {
+         errors.noprofile = 'There is no profile for this user';
+         res.status(404).json(errors);
+      }
+      else {
+         res.json(profile);
+      }
+   }
+   catch (err) {
+      res.status(404).json({ profile: 'There is no profile for this user' });
+   }
+};
+
+exports.getProfiles = async (req, res) => {
+   try {
+      const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+      if (!profiles) {
+         errors.noprofile = 'There is no profiles';
+         res.status(404).json(errors);
+      }
+      else {
+         res.json(profiles);
+      }
+   }
+   catch (err) {
+      res.status(404).json({ profile: 'There are no profiles.' });
+   }
+};
