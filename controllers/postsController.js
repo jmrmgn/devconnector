@@ -3,6 +3,7 @@ const validatePostInput = require('../validation/post');
 
 // Models
 const Post = require('../models/Post');
+const Profile = require('../models/Profile');
 
 exports.postPost = async (req, res, next) => {
 
@@ -27,4 +28,53 @@ exports.postPost = async (req, res, next) => {
       (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
 
+};
+
+exports.getPosts = async (req, res, next) => {
+   try {
+      const posts = await Post.find().sort({ date: "-1" });
+      res.json(posts);
+
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.getPost = async (req, res, next) => {
+   const postId = req.params.postId;
+   try {
+      const post = await Post.findOne({ _id: postId }).exec();
+      if (!post) {
+         throw errorHandler("Post doesn't exist", 404);
+      }
+      else {
+         res.json(post);
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.deletePost = async (req, res, next) => {
+   try {
+      // const profile = await Profile.findOne({ user: req.user.id }).exec();
+      const post = await Post.findOne({ _id: req.params.postId }).exec();
+      if (!post) {
+         throw errorHandler("No post found", 404);
+      }
+      else {
+         if (post.user.toString() !== req.user.id) {
+            throw errorHandler("Unauthorized", 401);
+         }
+         else {
+            await post.remove();
+            res.json({ success: true });
+         }
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
 };
