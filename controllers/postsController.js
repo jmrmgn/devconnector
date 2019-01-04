@@ -130,3 +130,63 @@ exports.deleteLikePost = async (req, res, next) => {
       (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
 };
+
+exports.postComment = async (req, res, next) => {
+   try {
+
+      const { errors, isValid } = validatePostInput(req.body);
+
+      // Check Validation
+      if (!isValid) {
+         res.status(400).json(errors);
+      }
+      const post = await Post.findById(req.params.postId);
+      if (post) {
+         const newComment = {
+            text: req.body.text,
+            name: req.body.name,
+            avatar: req.body.avatar,
+            user: req.user.id
+         };
+
+         post.comments.unshift(newComment);
+         await post.save();
+         res.json(post);
+      }
+      else {
+         throw errorHandler("No post found", 404);
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.deleteComment = async (req, res, next) => {
+   try {
+      const post = await Post.findById(req.params.postId);
+      if (post) {
+         // Check first if the comment exist
+         if (post.comments.filter(comment => comment._id.toString() === req.params.commentId).length === 0) {
+            throw errorHandler("Comment doesnt exist", 404);
+         }
+         else {
+            // Get remove index
+            const removeIndex = post.comments
+               .map(item => item._id.toString())
+               .indexOf(req.params.commentId);
+            
+            // Splice comment out of array
+            post.comments.splice(removeIndex, 1);
+            await post.save();
+            res.json(post);
+         }
+      }
+      else {
+         throw errorHandler("No post found", 404);
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
