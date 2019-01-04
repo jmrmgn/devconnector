@@ -29,6 +29,15 @@ router.get('/handle/:handle', profileController.getProfileByHandle);
 // @access  Public
 router.get('/user/:userId', profileController.getProfileByUserId);
 
+// @route   POST api/profile/experience
+// @desc    Add experience to profile
+// @access  Private
+router.post('/experience', passport.authenticate('jwt', { session: false }), profileController.postExperience);
+
+// @route   POST api/profile/education
+// @desc    Add education to profile
+// @access  Private
+router.post('/education', passport.authenticate('jwt', { session: false }), profileController.postEducation);
 
 
 module.exports = router;

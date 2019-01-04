@@ -1,8 +1,10 @@
+const errorHandler = require('../middleware/errorHandler').errorHandler;
 const validateProfileInput = require('../validation/profile');
+const validateExperienceInput = require('../validation/experience');
+const validateEducationInput = require('../validation/education');
 
 // Models
 const Profile = require('../models/Profile');
-const User = require('../models/User');
 
 exports.getProfile = async (req, res) => {
    try {
@@ -136,5 +138,75 @@ exports.getProfiles = async (req, res) => {
    }
    catch (err) {
       res.status(404).json({ profile: 'There are no profiles.' });
+   }
+};
+
+exports.postExperience = async (req, res, next) => {
+   try {
+      const { errors, isValid } = validateExperienceInput(req.body);
+
+      // Check Validation
+      if (!isValid) {
+         res.status(400).json(errors);
+      }
+
+      const user = req.user.id;
+      const profile = await Profile.findOne({ user: user });
+      const newExp = {
+         title: req.body.title,
+         company: req.body.company,
+         location: req.body.location,
+         from: req.body.from,
+         to: req.body.to,
+         current: req.body.current,
+         description: req.body.description
+      }
+
+      if (profile) {
+         profile.experience.unshift(newExp);
+         const updatedProfile = await profile.save();
+         res.json(updatedProfile);
+      }
+      else {
+         throw errorHandler("Unauthorized", 401);
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.postEducation = async (req, res, next) => {
+   try {
+      const { errors, isValid } = validateEducationInput(req.body);
+
+      // Check Validation
+      if (!isValid) {
+         res.status(400).json(errors);
+      }
+
+      const user = req.user.id;
+      const profile = await Profile.findOne({ user: user });
+      const newEduc = {
+         school: req.body.school,
+         degree: req.body.degree,
+         fieldofstudy: req.body.fieldofstudy,
+         from: req.body.from,
+         to: req.body.to,
+         current: req.body.current,
+         description: req.body.description
+      }
+
+      if (profile) {
+         profile.education.unshift(newEduc);
+         const updatedProfile = await profile.save();
+         res.json(updatedProfile);
+      }
+      else {
+         throw errorHandler("Unauthorized", 401);
+      }
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
 };
