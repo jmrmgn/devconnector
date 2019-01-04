@@ -5,6 +5,7 @@ const validateEducationInput = require('../validation/education');
 
 // Models
 const Profile = require('../models/Profile');
+const User = require('../models/User');
 
 exports.getProfile = async (req, res) => {
    try {
@@ -209,4 +210,68 @@ exports.postEducation = async (req, res, next) => {
    catch (err) {
       (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
+};
+
+exports.deleteExperience = async (req, res, next) => {
+   try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      if (profile) {
+         // Get remove Index
+         const removeIndex = profile.experience
+         .map(item => item.id)
+         .indexOf(req.params.exp_id);
+
+         // Splice out of an array
+         profile.experience.splice(removeIndex, 1);
+
+         // save
+         const updatedProfile = await profile.save();
+         res.json(updatedProfile);
+      }
+      else {
+         throw errorHandler("Unauthorized", 401);
+      }
+      
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.deleteEducation = async (req, res, next) => {
+   try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      if (profile) {
+         // Get remove Index
+         const removeIndex = profile.education
+         .map(item => item.id)
+         .indexOf(req.params.educId);
+
+         // Splice out of an array
+         profile.education.splice(removeIndex, 1);
+
+         // save
+         const updatedProfile = await profile.save();
+         res.json(updatedProfile);
+      }
+      else {
+         throw errorHandler("Unauthorized", 401);
+      }
+      
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.deleteProfile = async (req, res, next) => {
+   try {
+      await Profile.findOneAndRemove({ user: req.user.id }, { useFindAndModify: false });
+      await User.findOneAndRemove({ _id: req.user.id }, { useFindAndModify: false });
+      res.json({ success: true });
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+
 };

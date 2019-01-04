@@ -39,5 +39,20 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), pro
 // @access  Private
 router.post('/education', passport.authenticate('jwt', { session: false }), profileController.postEducation);
 
+// @route   DELETE api/profile/experience/:expId
+// @desc    Delete experience from profile
+// @access  Private
+router.delete('/experience/:expId', passport.authenticate('jwt', { session: false }), profileController.deleteExperience);
+
+// @route   DELETE api/profile/educataion/:educId
+// @desc    Delete education from profile
+// @access  Private
+router.delete('/education/:educId', passport.authenticate('jwt', { session: false }), profileController.deleteEducation);
+
+// @route   DELETE api/profile
+// @desc    Delete profile
+// @access  Private
+router.delete('/', passport.authenticate('jwt', { session: false }), profileController.deleteProfile);
+
 
 module.exports = router;
