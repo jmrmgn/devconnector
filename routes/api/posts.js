@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 const postsController = require('../../controllers/postsController');
 
-// @route   GET api/posts
-// @desc    Get index of the posts
-// @accecss Public
-router.get('/', postsController.getIndex);
+// @route   POST api/posts
+// @desc    Create Post
+// @accecss Private
+router.post('/', passport.authenticate('jwt', { session: false }), postsController.postPost);
 
 module.exports = router;
