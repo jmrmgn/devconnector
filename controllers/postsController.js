@@ -78,3 +78,55 @@ exports.deletePost = async (req, res, next) => {
       (!err.statusCode) ? (err.statusCode = 500) : next(err);
    }
 };
+
+exports.postLikePost = async (req, res, next) => {
+   try {
+      // const profile = await Profile.findOne({ user: req.user.id }).exec();
+      const post = await Post.findById({ _id: req.params.postId });
+      if (post) {
+         if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+            throw errorHandler("User already liked this post", 400);
+         }
+         else {
+            post.likes.unshift({ user: req.user.id });
+            await post.save();
+            res.json({ success: true });
+         }
+      }
+      else {
+         throw errorHandler("No post found", 404);
+      }
+
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
+
+exports.deleteLikePost = async (req, res, next) => {
+   try {
+      // const profile = await Profile.findOne({ user: req.user.id }).exec();
+      const post = await Post.findById({ _id: req.params.postId });
+      if (post) {
+         if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+            throw errorHandler("You have not yet liked this post", 400);
+         }
+         else {
+            const removeIndex = post.likes
+               .map(item => item.user.toString())
+               .indexOf(req.user.id);
+            
+            post.likes.splice(removeIndex, 1);
+            await post.save();
+            res.json(post);
+         }
+      }
+      else {
+         throw errorHandler("No post found", 404);
+      }
+
+   }
+   catch (err) {
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+   }
+};
