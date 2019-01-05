@@ -2,11 +2,18 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
+// Layout component
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import Landing from './components/layout/Landing';
+
 class App extends Component {
    render() {
       return (
          <div className="App">
-            <h1>Test</h1>
+            <Navbar />
+            <Landing />
+            <Footer />
          </div>
       );
    }
