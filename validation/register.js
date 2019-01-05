@@ -34,6 +34,10 @@ const validateRegisterInput = (data) => {
       errors.password = 'Password must be at least 6 characters';
    }
 
+   if (Validator.isEmpty(data.password2)) {
+      errors.password2 = 'Confirm password is required';
+   }
+
    if (!Validator.equals(data.password, data.password2)) {
       errors.password2 = 'Passwords must match';
    }
