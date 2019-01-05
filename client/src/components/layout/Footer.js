@@ -1,10 +1,12 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = props => {
    return (
-      <footer className="bg-dark text-white mt-5 p4 text-center">
-         Copyright &copy; {new Date().getFullYear} Devconnector
-      </footer>
+      <React.Fragment>
+         <footer className="bg-dark text-white mt-5 p4 text-center">
+            Copyright &copy; Devconnector
+         </footer>
+      </React.Fragment>
    );
 };
 
