@@ -85,7 +85,7 @@ exports.postLogin = async (req, res, next) => {
             res.json({ success: true, token: 'Bearer ' + token });
          }
          else {
-            errors.email = "Wrong password";
+            errors.password = "Wrong password";
             res.status(400).json(errors);
          }
       }
