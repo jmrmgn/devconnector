@@ -21,13 +21,13 @@ class Login extends Component {
       }
    }
 
-   static getDerivedStateFromProps(nextProps, nextState) {
+   componentWillReceiveProps(nextProps) {
       if (nextProps.auth.isAuthenticated) {
          nextProps.history.push('/dashboard');
       }
       
       if (nextProps.errors) {
-         return { errors: nextProps.errors };
+         this.setState({ errors: nextProps.errors });
       }
    }
 

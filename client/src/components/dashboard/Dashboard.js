@@ -34,12 +34,22 @@ class Dashboard extends Component {
                <div>
                   <p className="lead text-muted">Welcome <Link to={`/profile/${profile.handle}`}>{user.name}</Link></p>
                   <ProfileActions />
-                  <Experience
-                     experience={profile.experience}
-                  />
-                  <Education
-                     education={profile.education}
-                  />
+                  { Object.keys(profile.experience).length > 0 
+                     ? <Experience experience={profile.experience} /> 
+                     : (
+                        <div className="form-group mb-2">
+                           <span className="text-muted">No experience yet.</span>
+                        </div>
+                        )
+                  }
+                  { Object.keys(profile.education).length > 0 
+                     ? <Education education={profile.education} />
+                     : (
+                        <div className="form-group mb-2">
+                           <span className="text-muted">No education yet.</span>
+                        </div>
+                        )
+                  }
                   <div className="mb-4" />
                   <button 
                      className="btn btn-danger"
