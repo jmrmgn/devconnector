@@ -25,7 +25,7 @@ exports.getProfile = async (req, res) => {
    }
 }
 
-exports.postProfile = async (req, res) => {
+exports.postProfile = async (req, res, next) => {
 
    const { errors, isValid } = validateProfileInput(req.body);
 
@@ -85,7 +85,7 @@ exports.postProfile = async (req, res) => {
       }
    }
    catch (err) {
-      res.status(404).json(err);
+      (!err.statusCode) ? (err.statusCode = 500) : next(err);      
    }
    
 }

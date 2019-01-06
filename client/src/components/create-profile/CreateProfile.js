@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import { createProfile } from '../../actions/profileActions';
 
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
@@ -29,6 +33,12 @@ class CreateProfile extends Component {
       };
    }
 
+   static getDerivedStateFromProps(nextProps, nextState) {
+      if (nextProps.errors) {
+         return { errors: nextProps.errors };
+      }
+   }
+
    onChange = e => {
       this.setState({
          [e.target.name]: e.target.value
@@ -37,6 +47,24 @@ class CreateProfile extends Component {
 
    onSubmit = e => {
       e.preventDefault();
+
+      const profileData = {
+         handle: this.state.handle,
+         company: this.state.company,
+         website: this.state.website,
+         location: this.state.location,
+         status: this.state.status,
+         skills: this.state.skills,
+         githubusername: this.state.githubusername,
+         bio: this.state.bio,
+         twitter: this.state.twitter,
+         facebook: this.state.facebook,
+         linkedin: this.state.linkedin,
+         youtube: this.state.youtube,
+         instagram: this.state.instagram
+      };
+
+      this.props.createProfile(profileData, this.props.history);
    };
 
    render() {
@@ -184,6 +212,7 @@ class CreateProfile extends Component {
                         />
                         <div className="mb-3">
                            <button
+                              type="button"
                               className="btn btn-secondary"
                               onClick={
                                  () => this.setState(prevState => ({
@@ -206,6 +235,7 @@ class CreateProfile extends Component {
 }
 
 CreateProfile.propTypes = {
+   createProfile: PropTypes.func.isRequired,
    profile: PropTypes.object.isRequired,
    errors: PropTypes.object.isRequired
 };
@@ -215,4 +245,4 @@ const mapStateToProps = state => ({
    errors: state.errors
 });
 
-export default connect(mapStateToProps, {})(CreateProfile);
+export default connect(mapStateToProps, { createProfile })(withRouter(CreateProfile));
