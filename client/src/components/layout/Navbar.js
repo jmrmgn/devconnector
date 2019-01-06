@@ -9,7 +9,7 @@ class Navbar extends Component {
    onLogout = e => {
       e.preventDefault();
       this.props.clearCurrentProfile();
-      this.props.logoutUser(this.props.history);
+      this.props.logoutUser();
    };
 
    render() {
