@@ -11,7 +11,7 @@ export default (state = initialState, action) => {
       case PROFILE_LOADING:
          return {
             ...state,
-            loading: true
+            loading: false
          };
 
       case CLEAR_CURRENT_PROFILE:
