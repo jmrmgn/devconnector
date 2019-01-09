@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ADD_POST, GET_POSTS, GET_ERRORS, POST_LOADING, DELETE_POST } from './types';
+import { ADD_POST, GET_POSTS, GET_POST, GET_ERRORS, POST_LOADING, DELETE_POST } from './types';
 
 // Posts loading
 export const setPostLoading = () => {
@@ -20,6 +20,21 @@ export const getPosts = () => async dispatch => {
    }
    catch (err) {
       dispatch({ type: GET_POSTS, payload: null });
+   }
+};
+
+// Get single post
+export const getPost = id => async dispatch => {
+   try {
+      dispatch(setPostLoading());
+      const res = await axios.get(`/api/posts/${id}`);
+      dispatch({
+         type: GET_POST,
+         payload: res.data
+      })
+   }
+   catch (err) {
+      dispatch({ type: GET_POST, payload: null });
    }
 };
 
