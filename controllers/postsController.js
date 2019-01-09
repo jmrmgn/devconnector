@@ -140,21 +140,23 @@ exports.postComment = async (req, res, next) => {
       if (!isValid) {
          res.status(400).json(errors);
       }
-      const post = await Post.findById(req.params.postId);
-      if (post) {
-         const newComment = {
-            text: req.body.text,
-            name: req.body.name,
-            avatar: req.body.avatar,
-            user: req.user.id
-         };
-
-         post.comments.unshift(newComment);
-         await post.save();
-         res.json(post);
-      }
       else {
-         throw errorHandler("No post found", 404);
+         const post = await Post.findById(req.params.postId);
+         if (post) {
+            const newComment = {
+               text: req.body.text,
+               name: req.body.name,
+               avatar: req.body.avatar,
+               user: req.user.id
+            };
+
+            post.comments.unshift(newComment);
+            await post.save();
+            res.json(post);
+         }
+         else {
+            throw errorHandler("No post found", 404);
+         }
       }
    }
    catch (err) {
