@@ -20,6 +20,9 @@ class Navbar extends Component {
                <Link className="nav-link" to="/dashboard">Dashboard</Link>
             </li>
             <li className="nav-item">
+               <Link className="nav-link" to="/posts">Posts</Link>
+            </li>
+            <li className="nav-item">
                <a 
                   href="/logout" 
                   onClick={this.onLogout.bind(this)}
