@@ -13,19 +13,20 @@ exports.postPost = async (req, res, next) => {
    if (!isValid) {
       res.status(400).json(errors);
    }
+   else {
+      const text = req.body.text;
+      const name = req.body.name;
+      const avatar = req.body.avatar;
+      const user = req.user.id;
 
-   const text = req.body.text;
-   const name = req.body.name;
-   const avatar = req.body.avatar;
-   const user = req.user.id;
-
-   try {
-      const post = new Post({text, name, avatar, user});
-      const newPost = await post.save();
-      res.json(newPost);
-   }
-   catch (err) {
-      (!err.statusCode) ? (err.statusCode = 500) : next(err);
+      try {
+         const post = new Post({text, name, avatar, user});
+         const newPost = await post.save();
+         res.json(newPost);
+      }
+      catch (err) {
+         (!err.statusCode) ? (err.statusCode = 500) : next(err);
+      }
    }
 
 };
