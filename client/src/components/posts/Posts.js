@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Spinner from '../common/Spinner';
+import PostsLoader from '../common/PostsLoader';
 import PostForm from './PostForm';
 import PostFeed from './PostFeed';
 
@@ -20,7 +20,12 @@ class Posts extends Component {
       let postContent;
 
       if (posts === null || loading) {
-         postContent = <Spinner />
+         postContent = (
+            <React.Fragment>
+               <PostsLoader />
+               <PostsLoader />
+            </React.Fragment>
+         );
       }
       else {
          postContent = <PostFeed posts={posts}/>
